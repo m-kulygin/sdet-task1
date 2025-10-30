@@ -1,0 +1,89 @@
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.openqa.selenium.PageLoadStrategy;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+
+public class BankManagerTest {
+    private WebDriver driver;
+    private BankManagerAddCustomerForm addCustomerForm;
+    private BankManagerCustomersForm customersForm;
+    private BankManagerCustomersForm customersForm2; // ЗАМЕНИТЬ / ПОПРАВИТЬ
+
+    @Before
+    public void setUp() {
+        ChromeOptions options = new ChromeOptions();
+        options.setPageLoadStrategy(PageLoadStrategy.EAGER);
+//        options.addArguments("--window-size=1920,1080");
+//        options.addArguments("--start-maximized");
+//        options.addArguments("--headless");
+        WebDriver driver = new ChromeDriver(options);
+        driver.get("https://www.globalsqa.com/angularJs-protractor/BankingProject/#/manager");
+        this.driver = driver;
+        addCustomerForm = new BankManagerAddCustomerForm(driver);
+        customersForm = new BankManagerCustomersForm(driver);
+        customersForm2 = new BankManagerCustomersForm(driver);
+    }
+
+    @After
+    public void tearDown() {
+        if (driver != null) {
+            driver.quit();
+        }
+    }
+
+    @Test
+    public void testAddCustomer() {
+        try {
+            String postCode = DataGenerator.generatePostCode();
+            String firstName = DataGenerator.generateFirstNameByPostCode(postCode);
+            String lastName = DataGenerator.generateLastName();
+
+        addCustomerForm
+                .clickAddCustomerButton()
+                .fillFirstNameField(firstName)
+                .fillLastNameField(lastName)
+                .fillPostCodeField(postCode)
+                .clickSubmitAddCustomerButton()
+                .verifyCustomerAddedAlertPresent();
+            Thread.sleep(2000);
+        }
+        catch(InterruptedException ignored){
+        }
+    }
+
+    @Test
+    public void testCustomersSort() {
+        try {
+            customersForm
+                    .clickCustomersButton()
+                    .clickFirstNameHeader()
+                    .verifyFirstNamesSorted();
+            Thread.sleep(2000);
+        } catch (InterruptedException ignored){}
+    }
+
+    @Test
+    public void testCustomerDeletion() {
+        try {
+            customersForm2
+                    .clickCustomersButton()
+                    .deleteCustomerBasedOnAverageFirstNameLength();
+            Thread.sleep(2000);
+        } catch (InterruptedException ignored) {
+        }
+    }
+    
+    /* TODO:
+    * 1) улучшить селекторы
+    * 2) вынести селекторы из методов в поля класса?
+    * 3) убрать лишние слипы + throws, там где нужно заменить на правильные вейты
+    * 4) отрефакторить третий кейс (упростить, прикрутить флюент)
+    * 5) разобраться с наследованием форм (как лучше ?)
+    * 6) учесть недочёты по фидбеку ТЗ
+    * 7) учесть рекомендации по мастер-классу
+    * */
+
+}
