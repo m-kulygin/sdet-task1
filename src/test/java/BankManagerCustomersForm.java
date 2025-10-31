@@ -1,3 +1,4 @@
+import io.qameta.allure.Step;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -25,11 +26,13 @@ public class BankManagerCustomersForm extends BankManagerPage {
         super(driver);
     }
 
+    @Step("Нажатие на заголовок First Name в таблице для сортировки")
     public BankManagerCustomersForm clickFirstNameHeader() throws InterruptedException {
         getWhenClickable(firstNameHeader).click();
         return this;
     }
 
+    @Step("Проверка отсортированности списка клиентов по first name")
     public boolean verifyFirstNamesSorted() throws InterruptedException {
         List<String> originalNames = firstNamesList.stream()
                 .map(WebElement::getText)
@@ -49,6 +52,7 @@ public class BankManagerCustomersForm extends BankManagerPage {
         return true;
     }
 
+    @Step("Удаление их списка клиента, имя которого по длине наиболее близка к средней длине всех имён")
     public BankManagerCustomersForm deleteCustomerBasedOnAverageFirstNameLength() throws InterruptedException {
         List<String> firstNames = extractFirstNamesFromTable();
         double avgLength = calculateAverageNameLength(firstNames);
@@ -120,6 +124,7 @@ public class BankManagerCustomersForm extends BankManagerPage {
     }
 
     @Override
+    @Step("Нажатие на кнопку Customers для открытия формы")
     public BankManagerCustomersForm clickCustomersButton() {
         getWhenClickable(customersButton).click();
         return this;

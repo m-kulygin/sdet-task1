@@ -1,3 +1,5 @@
+import io.qameta.allure.Owner;
+import io.qameta.allure.junit4.DisplayName;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -8,6 +10,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.util.UUID;
 
+@DisplayName("Кейсы тестирования формы XYZBank вкладки менеджера")
 public class BankManagerTest {
     private WebDriver driver;
     private BankManagerAddCustomerForm addCustomerForm;
@@ -43,6 +46,8 @@ public class BankManagerTest {
     }
 
     @Test
+    @DisplayName("Кейс 1: добавление клиента")
+    @Owner("Max Kulygin")
     public void testAddCustomer() {
         try {
             String postCode = DataGenerator.generatePostCode();
@@ -63,6 +68,8 @@ public class BankManagerTest {
     }
 
     @Test
+    @DisplayName("Кейс 2: сортировка списка клиентов")
+    @Owner("Max Kulygin")
     public void testCustomersSort() {
         try {
             customersForm
@@ -74,6 +81,8 @@ public class BankManagerTest {
     }
 
     @Test
+    @DisplayName("Кейс 3: удаление клиента с именем, наиболее близким по длине к средней")
+    @Owner("Max Kulygin")
     public void testCustomerDeletion() {
         try {
             customersForm2

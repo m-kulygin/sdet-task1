@@ -1,3 +1,4 @@
+import io.qameta.allure.Step;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -23,26 +24,31 @@ public class BankManagerAddCustomerForm extends BankManagerPage{
         super(driver);
     }
 
+    @Step("Заполнение поля first name значением {firstName}")
     public BankManagerAddCustomerForm fillFirstNameField(String firstName) {
         getWhenClickable(firstNameField).sendKeys(firstName);
         return this;
     }
 
+    @Step("Заполнение поля last name значением {lastName}")
     public BankManagerAddCustomerForm fillLastNameField(String lastName) {
         getWhenClickable(lastNameField).sendKeys(lastName);
         return this;
     }
 
+    @Step("Заполнение поля post code значением {postCode}")
     public BankManagerAddCustomerForm fillPostCodeField(String postCode) {
         getWhenClickable(postCodeField).sendKeys(postCode);
         return this;
     }
 
+    @Step("Нажатие на кнопку Add Customer для добавления клиента")
     public BankManagerAddCustomerForm clickSubmitAddCustomerButton() {
         getWhenClickable(submitAddCustomerButton).click();
         return this;
     }
 
+    @Step("Проверка наличия алерта об успешном добавлении клиента")
     public BankManagerAddCustomerForm verifyCustomerAddedAlertPresent() throws InterruptedException {
         Alert alert = driver.switchTo().alert();
         String alertText = alert.getText();
@@ -52,6 +58,7 @@ public class BankManagerAddCustomerForm extends BankManagerPage{
     }
 
     @Override
+    @Step("Нажатие на кнопку Add Customer для открытия формы")
     public BankManagerAddCustomerForm clickAddCustomerButton() {
         getWhenClickable(addCustomerButton).click();
         return this;

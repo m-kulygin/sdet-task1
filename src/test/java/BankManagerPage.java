@@ -1,3 +1,4 @@
+import io.qameta.allure.Step;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -32,16 +33,19 @@ public class BankManagerPage {
         return wait.until(ExpectedConditions.elementToBeClickable(element));
     }
 
+    @Step("Нажатие на кнопку Add Customer для открытия формы")
     public BankManagerPage clickAddCustomerButton() {
         getWhenClickable(addCustomerButton).click();
         return this;
     }
 
+    @Step("Нажатие на кнопку Open Account для открытия формы")
     public BankManagerPage clickOpenAccountButton() {
         getWhenClickable(openAccountButton).click();
         return this;
     }
 
+    @Step("Нажатие на кнопку Customers для открытия формы")
     public BankManagerPage clickCustomersButton() {
         getWhenClickable(customersButton).click();
         return this;
