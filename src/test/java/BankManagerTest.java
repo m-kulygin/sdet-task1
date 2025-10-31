@@ -6,6 +6,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
+import java.util.UUID;
+
 public class BankManagerTest {
     private WebDriver driver;
     private BankManagerAddCustomerForm addCustomerForm;
@@ -16,9 +18,11 @@ public class BankManagerTest {
     public void setUp() {
         ChromeOptions options = new ChromeOptions();
         options.setPageLoadStrategy(PageLoadStrategy.EAGER);
-//        options.addArguments("--window-size=1920,1080");
-//        options.addArguments("--start-maximized");
-//        options.addArguments("--headless");
+        options.addArguments("--window-size=1920,1080");
+        options.addArguments("--start-maximized");
+        options.addArguments("--headless");
+        String tempDir = System.getProperty("java.io.tmpdir") + UUID.randomUUID() + "/";
+        options.addArguments("--user-data-dir=" + tempDir);
         WebDriver driver = new ChromeDriver(options);
         driver.get("https://www.globalsqa.com/angularJs-protractor/BankingProject/#/manager");
         this.driver = driver;
