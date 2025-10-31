@@ -61,7 +61,6 @@ public class BankManagerTest {
                 .fillPostCodeField(postCode)
                 .clickSubmitAddCustomerButton()
                 .verifyCustomerAddedAlertPresent();
-            Thread.sleep(2000);
         }
         catch(InterruptedException ignored){
         }
@@ -76,7 +75,6 @@ public class BankManagerTest {
                     .clickCustomersButton()
                     .clickFirstNameHeader()
                     .verifyFirstNamesSorted();
-            Thread.sleep(2000);
         } catch (InterruptedException ignored){}
     }
 
@@ -88,7 +86,6 @@ public class BankManagerTest {
             customersForm2
                     .clickCustomersButton()
                     .deleteCustomerBasedOnAverageFirstNameLength();
-            Thread.sleep(2000);
         } catch (InterruptedException ignored) {
         }
     }
