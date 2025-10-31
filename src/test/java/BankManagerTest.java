@@ -17,12 +17,16 @@ public class BankManagerTest {
     @Before
     public void setUp() {
         ChromeOptions options = new ChromeOptions();
-        options.setPageLoadStrategy(PageLoadStrategy.EAGER);
-        options.addArguments("--window-size=1920,1080");
-        options.addArguments("--start-maximized");
+//        options.setPageLoadStrategy(PageLoadStrategy.EAGER);
+//        options.addArguments("--window-size=1920,1080");
+//        options.addArguments("--start-maximized");
+//        options.addArguments("--headless");
+//        String tempDir = System.getProperty("java.io.tmpdir") + UUID.randomUUID() + "/";
+//        options.addArguments("--user-data-dir=" + tempDir);
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--headless");
-        String tempDir = System.getProperty("java.io.tmpdir") + UUID.randomUUID() + "/";
-        options.addArguments("--user-data-dir=" + tempDir);
+        options.addArguments("--user-data-dir=/tmp/chrome-profile-" + UUID.randomUUID());
         WebDriver driver = new ChromeDriver(options);
         driver.get("https://www.globalsqa.com/angularJs-protractor/BankingProject/#/manager");
         this.driver = driver;
