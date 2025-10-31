@@ -26,7 +26,7 @@ public class BankManagerTest {
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--headless");
-        options.addArguments("--user-data-dir=/tmp/chrome-profile-" + UUID.randomUUID());
+        options.addArguments("--user-data-dir=/home/seluser/selenium");
         WebDriver driver = new ChromeDriver(options);
         driver.get("https://www.globalsqa.com/angularJs-protractor/BankingProject/#/manager");
         this.driver = driver;
