@@ -1,13 +1,21 @@
+package pages;
+
 import io.qameta.allure.Step;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+import utilities.WaitHelper;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class BankManagerAddCustomerForm extends BankManagerPage{
+public class BankManagerAddCustomerForm extends BankManagerPage {
+
+    @FindBy(css = "button[ng-class='btnClass1']")
+    protected WebElement addCustomerButton;
+
     @FindBy(css = "input[type=text][ng-model='fName']")
     private WebElement firstNameField;
 
@@ -20,31 +28,36 @@ public class BankManagerAddCustomerForm extends BankManagerPage{
     @FindBy(css = "button[type=submit][class='btn btn-default']")
     private WebElement submitAddCustomerButton;
 
-    public BankManagerAddCustomerForm(WebDriver driver) {
-        super(driver);
+    public BankManagerAddCustomerForm(WebDriver driver, WaitHelper waiter) {
+        super(driver, waiter);
+        PageFactory.initElements(driver, this);
     }
 
     @Step("Заполнение поля first name значением {firstName}")
     public BankManagerAddCustomerForm fillFirstNameField(String firstName) {
-        getWhenClickable(firstNameField).sendKeys(firstName);
+        waiter.untilToBeClickable(firstNameField);
+        firstNameField.sendKeys(firstName);
         return this;
     }
 
     @Step("Заполнение поля last name значением {lastName}")
     public BankManagerAddCustomerForm fillLastNameField(String lastName) {
-        getWhenClickable(lastNameField).sendKeys(lastName);
+        waiter.untilToBeClickable(lastNameField);
+        lastNameField.sendKeys(lastName);
         return this;
     }
 
     @Step("Заполнение поля post code значением {postCode}")
     public BankManagerAddCustomerForm fillPostCodeField(String postCode) {
-        getWhenClickable(postCodeField).sendKeys(postCode);
+        waiter.untilToBeClickable(postCodeField);
+        postCodeField.sendKeys(postCode);
         return this;
     }
 
     @Step("Нажатие на кнопку Add Customer для добавления клиента")
     public BankManagerAddCustomerForm clickSubmitAddCustomerButton() {
-        getWhenClickable(submitAddCustomerButton).click();
+        waiter.untilToBeClickable(submitAddCustomerButton);
+        submitAddCustomerButton.click();
         return this;
     }
 
@@ -57,10 +70,10 @@ public class BankManagerAddCustomerForm extends BankManagerPage{
         return this;
     }
 
-    @Override
     @Step("Нажатие на кнопку Add Customer для открытия формы")
     public BankManagerAddCustomerForm clickAddCustomerButton() {
-        getWhenClickable(addCustomerButton).click();
+        waiter.untilToBeClickable(addCustomerButton);
+        addCustomerButton.click();
         return this;
     }
 }
