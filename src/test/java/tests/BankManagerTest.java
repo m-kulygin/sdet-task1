@@ -7,51 +7,56 @@ import pages.BankManagerAddCustomerForm;
 import pages.BankManagerCustomersForm;
 import utilities.DataGenerator;
 
-@DisplayName("Кейсы тестирования формы XYZBank вкладки менеджера")
+/**
+ * Class, that realises test-cases.
+ *
+ * @author Max Kulygin
+ */
+@DisplayName("Test-cases for autotesting XYZBank manager form")
 public class BankManagerTest extends BaseTest {
 
+    /**
+     * Test-case 1 realisation: customer addition.
+     */
     @Test
-    @DisplayName("Кейс 1: добавление клиента")
+    @DisplayName("Test-case 1: customer addition")
     @Owner("Max Kulygin")
     public void testAddCustomer() {
-        try {
-            String postCode = DataGenerator.generatePostCode();
-            String firstName = DataGenerator.generateFirstNameByPostCode(postCode);
-            String lastName = DataGenerator.generateLastName();
+        String postCode = DataGenerator.generatePostCode();
+        String firstName = DataGenerator.generateFirstNameByPostCode(postCode);
+        String lastName = DataGenerator.generateLastName();
 
-            new BankManagerAddCustomerForm(driver, waiter)
-                    .clickAddCustomerButton()
-                    .fillFirstNameField(firstName)
-                    .fillLastNameField(lastName)
-                    .fillPostCodeField(postCode)
-                    .clickSubmitAddCustomerButton()
-                    .verifyCustomerAddedAlertPresent();
-        } catch (InterruptedException ignored) {
-        }
+        new BankManagerAddCustomerForm(driver)
+                .clickAddCustomerButton()
+                .fillFirstNameField(firstName)
+                .fillLastNameField(lastName)
+                .fillPostCodeField(postCode)
+                .clickSubmitAddCustomerButton()
+                .verifyCustomerAddedAlertPresent();
     }
 
+    /**
+     * Test-case 2 realisation: customers list sorting.
+     */
     @Test
-    @DisplayName("Кейс 2: сортировка списка клиентов")
+    @DisplayName("Test-case 2: customers list sorting")
     @Owner("Max Kulygin")
     public void testCustomersSort() {
-        try {
-            new BankManagerCustomersForm(driver, waiter)
-                    .clickCustomersButton()
-                    .clickFirstNameHeader()
-                    .verifyFirstNamesSorted();
-        } catch (InterruptedException ignored) {
-        }
+        new BankManagerCustomersForm(driver)
+                .clickCustomersButton()
+                .clickFirstNameHeader()
+                .verifyFirstNamesSorted();
     }
 
+    /**
+     * Test-case 3 realisation: deleting a customer with first name length closest to average.
+     */
     @Test
-    @DisplayName("Кейс 3: удаление клиента с именем, наиболее близким по длине к средней")
+    @DisplayName("Test-case 3: deleting a customer with first name length closest to average")
     @Owner("Max Kulygin")
     public void testCustomerDeletion() {
-        try {
-            new BankManagerCustomersForm(driver, waiter)
-                    .clickCustomersButton()
-                    .deleteCustomerBasedOnAverageFirstNameLength();
-        } catch (InterruptedException ignored) {
-        }
+        new BankManagerCustomersForm(driver)
+                .clickCustomersButton()
+                .deleteCustomerBasedOnAverageFirstNameLength();
     }
 }

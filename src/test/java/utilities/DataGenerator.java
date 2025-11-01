@@ -2,6 +2,11 @@ package utilities;
 
 import java.util.Random;
 
+/**
+ * Utility class, that provides customers data generation.
+ *
+ * @author Max Kulygin
+ */
 public class DataGenerator {
 
     private static final String ALPHABET_LOWERCASE = "abcdefghijklmnopqrstuvwxyz";
@@ -9,6 +14,10 @@ public class DataGenerator {
     private static final int POST_CODE_LENGTH = 10;
     private static final int ALPHABET_LENGTH = ALPHABET_LOWERCASE.length();
 
+    /**
+     * Generate post code, containing 10 random digits.
+     * @return Generated post code value as string containing digits
+     */
     public static String generatePostCode() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < POST_CODE_LENGTH; i++) {
@@ -18,9 +27,14 @@ public class DataGenerator {
         return sb.toString();
     }
 
+    /**
+     * Generate first name depending on post code value.
+     * @param postCode Post code value for first name value generating
+     * @return Generated first name value
+     */
     public static String generateFirstNameByPostCode(String postCode) {
         if (postCode.length() != POST_CODE_LENGTH || !postCode.matches("\\d+")) {
-            throw new IllegalArgumentException("Invalid post code format");
+            throw new AssertionError("Invalid post code format while generating first name");
         }
 
         char[] chars = postCode.toCharArray();
@@ -34,6 +48,10 @@ public class DataGenerator {
         return result.toString();
     }
 
+    /**
+     * Generate last name, containing from 5 to 10 random english letters.
+     * @return Generated last name value
+     */
     public static String generateLastName() {
         int length = random.nextInt(6) + 5;
         StringBuilder surname = new StringBuilder();
@@ -46,5 +64,4 @@ public class DataGenerator {
 
         return surname.toString();
     }
-
 }

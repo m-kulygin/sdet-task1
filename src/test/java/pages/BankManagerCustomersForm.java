@@ -6,16 +6,26 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.PageFactory;
+import utilities.CustomersFormUtil;
+import utilities.MessageConstants;
 import utilities.WaitHelper;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.Assert.assertFalse;
 
+/**
+ * Page class, that realises customers list actions.
+ *
+ * @author Max Kulygin
+ */
 public class BankManagerCustomersForm extends BankManagerPage {
 
+    /**
+     * Main Customers button, that opens customers list form.
+     */
     @FindBy(css = "button[ng-class='btnClass3']")
     protected WebElement customersButton;
 
@@ -28,52 +38,89 @@ public class BankManagerCustomersForm extends BankManagerPage {
     @FindBy(xpath = "//table[@class='table table-bordered table-striped']//tbody/tr")
     private List<WebElement> customerRows;
 
-    public BankManagerCustomersForm(WebDriver driver, WaitHelper waiter) {
-        super(driver, waiter);
-        PageFactory.initElements(driver, this);
+    private final static By customersTableLocator =
+            By.xpath("//table[@class='table table-bordered table-striped']");
+    private final static By deleteCustomerButtonLocator =
+            By.xpath(".//button[contains(text(), 'Delete')]");
+
+    /**
+     * Construct with WebDriver and WaitHelper.
+     *
+     * @param driver Chrome web driver
+     */
+    public BankManagerCustomersForm(WebDriver driver) {
+        super(driver);
     }
 
-    @Step("Нажатие на заголовок First Name в таблице для сортировки")
-    public BankManagerCustomersForm clickFirstNameHeader() throws InterruptedException {
-        waiter.untilToBeClickable(firstNameHeader);
+    /**
+     * Click first name header to perform customers list sorting by first name.
+     *
+     * @return This form object (for Fluent)
+     */
+    @Step("Click on first name header in table to do sorting")
+    public BankManagerCustomersForm clickFirstNameHeader() {
+        WaitHelper.untilToBeClickable(firstNameHeader);
         firstNameHeader.click();
         return this;
     }
 
-    @Step("Проверка отсортированности списка клиентов по first name")
-    public boolean verifyFirstNamesSorted() throws InterruptedException {
+    /**
+     * Verify that customers list is sorted
+     */
+    @Step("Checking customers list is sorted by first name")
+    public void verifyFirstNamesSorted() {
         List<String> originalNames = firstNamesList.stream()
                 .map(WebElement::getText)
                 .toList();
-
-        List<String> ascSortedCopy = new ArrayList<>(originalNames);
-        Collections.sort(ascSortedCopy);
-
-        List<String> descSortedCopy = new ArrayList<>(originalNames);
-        descSortedCopy.sort(Collections.reverseOrder());
-
-        boolean isSortedAsc = originalNames.equals(ascSortedCopy);
-        boolean isSortedDesc = originalNames.equals(descSortedCopy);
-
-        Assert.assertTrue(isSortedAsc || isSortedDesc);
-
-        return true;
+        boolean isSortedAsc = checkFirstNamesSortedAscending(originalNames);
+        boolean isSortedDesc = checkFirstNamesSortedDescending(originalNames);
+        Assert.assertTrue(MessageConstants.MSG_CUSTOMERS_LIST_NOT_SORTED, isSortedAsc || isSortedDesc);
     }
 
-    @Step("Удаление их списка клиента, имя которого по длине наиболее близка к средней длине всех имён")
-    public BankManagerCustomersForm deleteCustomerBasedOnAverageFirstNameLength() throws InterruptedException {
-        waiter.untilToBePresent(By.xpath("//table[@class='table table-bordered table-striped']"));
+    /**
+     * Check that customers list is sorted ascending.
+     *
+     * @param originalNames Original names list
+     * @return true if customers list is sorted (asc), false otherwise
+     */
+    @Step("Checking customers list is sorted by first name in ascending order")
+    public boolean checkFirstNamesSortedAscending(List<String> originalNames) {
+        List<String> ascSortedCopy = new ArrayList<>(originalNames);
+        Collections.sort(ascSortedCopy);
+        return originalNames.equals(ascSortedCopy);
+    }
 
-        List<String> firstNames = extractFirstNamesFromTable();
-        double avgLength = calculateAverageNameLength(firstNames);
+    /**
+     * Check that customers list is sorted descending.
+     *
+     * @param originalNames Original names list
+     * @return true if customers list is sorted (desc), false otherwise
+     */
+    @Step("Checking customers list is sorted by first name in ascending order")
+    public boolean checkFirstNamesSortedDescending(List<String> originalNames) {
+        List<String> descSortedCopy = new ArrayList<>(originalNames);
+        descSortedCopy.sort(Collections.reverseOrder());
+        return originalNames.equals(descSortedCopy);
+    }
 
-        Optional<String> closestNameOpt = findClosestName(firstNames, avgLength);
-        if (closestNameOpt.isEmpty()) {
-            throw new RuntimeException("No suitable name found");
+    /**
+     * Delete a customer with first name length closest to average.
+     *
+     * @return This form object (for Fluent)
+     */
+    @Step("Deleting customer with first name length closest to average")
+    public BankManagerCustomersForm deleteCustomerBasedOnAverageFirstNameLength() {
+        WaitHelper.untilToBePresent(customersTableLocator);
+
+        List<String> firstNames = CustomersFormUtil.extractFirstNamesFromTable(customerRows);
+        double avgLength = CustomersFormUtil.calculateAverageNameLength(firstNames);
+
+        String closestName = CustomersFormUtil.findClosestName(firstNames, avgLength);
+        if (closestName == null) {
+            throw new AssertionError(MessageConstants.MSG_NO_CUSTOMER_AVG_NAME);
         }
-        String closestName = closestNameOpt.get();
 
-        List<String> accountNumbers = retrieveAccountNumbersForUser(closestName);
+        List<String> accountNumbers = CustomersFormUtil.retrieveAccountNumbersForUser(closestName, customerRows);
 
         deleteCustomerWithName(closestName);
 
@@ -82,62 +129,38 @@ public class BankManagerCustomersForm extends BankManagerPage {
         return this;
     }
 
-    private List<String> extractFirstNamesFromTable() throws InterruptedException {
-        return customerRows.stream()
-                .map(row -> row.findElements(By.tagName("td")).get(0).getText())
-                .collect(Collectors.toList());
-    }
-
-    private double calculateAverageNameLength(List<String> names) {
-        return names.stream()
-                .mapToInt(String::length)
-                .average().orElseThrow(() -> new IllegalStateException("No data"));
-    }
-
-    private Optional<String> findClosestName(List<String> names, double avgLength) {
-        return names.stream()
-                .min(Comparator.comparingDouble(name -> Math.abs(name.length() - avgLength)));
-    }
-
-    private List<String> retrieveAccountNumbersForUser(String userName) {
-        for (WebElement row : customerRows) {
-            if (row.findElements(By.tagName("td"))
-                    .get(0)
-                    .getText()
-                    .equals(userName)) {
-                return row.findElements(By.tagName("td"))
-                        .get(3)
-                        .findElements(By.tagName("span"))
-                        .stream()
-                        .map(WebElement::getText)
-                        .collect(Collectors.toList());
-            }
-        }
-        return new ArrayList<>();
-    }
-
+    /**
+     * Deleting customer.
+     */
+    @Step("Deleting customer")
     private void deleteCustomerWithName(String name) {
         customerRows.stream()
-                .filter(row -> row.findElements(By.tagName("td")).get(0).getText().equals(name))
+                .filter(row -> CustomersFormUtil.getRowFirstName(row).equals(name))
                 .findAny()
                 .ifPresent(targetRow -> targetRow
-                        .findElement(By.xpath(".//button[contains(text(), 'Delete')]")).click());
+                        .findElement(deleteCustomerButtonLocator)
+                        .click());
     }
 
-    private void verifyDeletion(List<String> accountNumbers) throws InterruptedException {
+    /**
+     * Verify that customer is deleted.
+     */
+    @Step("Verify customer deletion")
+    private void verifyDeletion(List<String> accountNumbers) {
         boolean anyAccountFound = customerRows.stream()
-                .flatMap(row -> row.findElements(By.tagName("td")).get(3)
-                        .findElements(By.tagName("span"))
-                        .stream()
-                        .map(WebElement::getText))
+                .flatMap(CustomersFormUtil::getRowAccountNumbers)
                 .anyMatch(accountNumbers::contains);
-
-        assertFalse(anyAccountFound);
+        assertFalse(MessageConstants.MSG_CUSTOMER_AVG_NAME_NOT_DELETED, anyAccountFound);
     }
 
-    @Step("Нажатие на кнопку Customers для открытия формы")
+    /**
+     * Click main Customers button to open customers list form.
+     *
+     * @return This form object (for Fluent)
+     */
+    @Step("Click Customers button to open customers table")
     public BankManagerCustomersForm clickCustomersButton() {
-        waiter.untilToBeClickable(customersButton);
+        WaitHelper.untilToBeClickable(customersButton);
         customersButton.click();
         return this;
     }

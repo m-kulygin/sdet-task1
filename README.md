@@ -99,6 +99,4 @@ _(из принципиальных моментов - перед открыти
 
 ## Мои контакты
 - Telegram: @longpastgone
-- Email: akademuk97@gmail.com  
-
-
+- Email: akademuk97@gmail.com

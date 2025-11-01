@@ -1,15 +1,23 @@
 package pages;
 
 import org.openqa.selenium.WebDriver;
-import utilities.WaitHelper;
+import org.openqa.selenium.support.PageFactory;
 
-
+/**
+ * Base page class.
+ *
+ * @author Max Kulygin
+ */
 public class BankManagerPage {
     WebDriver driver;
-    WaitHelper waiter;
 
-    public BankManagerPage(WebDriver driver, WaitHelper waiter) {
+    /**
+     * Construct with WebDriver and WaitHelper.
+     *
+     * @param driver Chrome web driver
+     */
+    public BankManagerPage(WebDriver driver) {
         this.driver = driver;
-        this.waiter = waiter;
+        PageFactory.initElements(driver, this);
     }
 }
