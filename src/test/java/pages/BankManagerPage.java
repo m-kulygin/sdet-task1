@@ -1,7 +1,6 @@
 package pages;
 
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.PageFactory;
 
 /**
  * Base page class.
@@ -18,6 +17,5 @@ public class BankManagerPage {
      */
     public BankManagerPage(WebDriver driver) {
         this.driver = driver;
-        PageFactory.initElements(driver, this);
     }
 }
