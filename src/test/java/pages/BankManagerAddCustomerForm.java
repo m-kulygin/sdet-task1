@@ -44,7 +44,6 @@ public class BankManagerAddCustomerForm extends BankManagerPage {
      */
     public BankManagerAddCustomerForm(WebDriver driver) {
         super(driver);
-        PageFactory.initElements(driver, this);
     }
 
     /**

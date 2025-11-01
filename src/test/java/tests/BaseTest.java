@@ -19,7 +19,7 @@ import java.util.UUID;
 public abstract class BaseTest {
 
     private final static String URL = "https://www.globalsqa.com/angularJs-protractor/BankingProject/#/manager";
-    private final static long WAIT_TIME_IN_SECONDS = 2L;
+    private final static long WAIT_TIME_IN_SECONDS = 1L;
 
     WebDriver driver;
     WebDriverWait webDriverWait;
