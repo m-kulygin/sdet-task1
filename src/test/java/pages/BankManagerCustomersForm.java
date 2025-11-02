@@ -10,6 +10,7 @@ import utilities.MessageConstants;
 import utilities.WaitHelper;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,25 +24,20 @@ import static org.junit.Assert.assertTrue;
  */
 public class BankManagerCustomersForm extends BankManagerPage {
 
+    private final static By customersTableLocator = By.xpath("//table[@class='table table-bordered table-striped']");
+    private final static By deleteCustomerButtonLocator = By.xpath(".//button[contains(text(), 'Delete')]");
+
     /**
      * Main Customers button, that opens customers list form.
      */
     @FindBy(css = "button[ng-class='btnClass3']")
     protected WebElement customersButton;
-
     @FindBy(xpath = "//a[contains(text(), 'First Name')]")
     private WebElement firstNameHeader;
-
     @FindBy(xpath = "//tbody/tr/td[1]")
     private List<WebElement> firstNamesList;
-
     @FindBy(xpath = "//table[@class='table table-bordered table-striped']//tbody/tr")
     private List<WebElement> customerRows;
-
-    private final static By customersTableLocator =
-            By.xpath("//table[@class='table table-bordered table-striped']");
-    private final static By deleteCustomerButtonLocator =
-            By.xpath(".//button[contains(text(), 'Delete')]");
 
     /**
      * Construct with WebDriver and WaitHelper.
@@ -74,7 +70,7 @@ public class BankManagerCustomersForm extends BankManagerPage {
         List<String> originalNames = CustomersFormUtil.getFirstNamesFromWebElements(firstNamesList);
         List<String> ascSortedCopy = new ArrayList<>(originalNames);
         Collections.sort(ascSortedCopy);
-        boolean sortedAsc =  originalNames.equals(ascSortedCopy);
+        boolean sortedAsc = originalNames.equals(ascSortedCopy);
         assertTrue(MessageConstants.MSG_CUSTOMERS_LIST_NOT_SORTED_ASC, sortedAsc);
         return this;
     }
@@ -88,28 +84,53 @@ public class BankManagerCustomersForm extends BankManagerPage {
     public BankManagerCustomersForm verifyFirstNamesSortedDescending() {
         List<String> originalNames = CustomersFormUtil.getFirstNamesFromWebElements(firstNamesList);
         List<String> descSortedCopy = new ArrayList<>(originalNames);
-        boolean sortedDesc =  originalNames.equals(descSortedCopy);
+        boolean sortedDesc = originalNames.equals(descSortedCopy);
         assertTrue(MessageConstants.MSG_CUSTOMERS_LIST_NOT_SORTED_DESC, sortedDesc);
         return this;
     }
 
     /**
-     * Delete a customer with first name length closest to average.
+     * Find all customers first names, which have first name lengths closest to average.
      *
-     * @return This form object (for Fluent)
+     * @return Closest to average first names
      */
-    @Step("Deleting customer with first name length closest to average")
-    public BankManagerCustomersForm deleteCustomerBasedOnAverageFirstNameLength() {
+    @Step("Find customers with first name lengths closest to average")
+    public List<String> findCustomersNamesWithFirstNameLengthsClosestToAverage() {
         WaitHelper.untilToBePresent(customersTableLocator);
         List<String> firstNames = CustomersFormUtil.extractFirstNamesFromTable(customerRows);
         double avgLength = CustomersFormUtil.calculateAverageNameLength(firstNames);
-        List<String> closestNames = CustomersFormUtil.findClosestNames(firstNames, avgLength);
-        if (closestNames == null || closestNames.isEmpty()) {
+        return CustomersFormUtil.findClosestNames(firstNames, avgLength);
+    }
+
+    /**
+     * Delete customers by first names list.
+     *
+     * @param firstNamesList First names list
+     * @return This form object (for Fluent)
+     */
+    @Step("Deleting customers by first names")
+    public BankManagerCustomersForm deleteCustomersByFirstNames(List<String> firstNamesList) {
+        if (firstNamesList == null || firstNamesList.isEmpty()) {
             throw new AssertionError(MessageConstants.MSG_NO_CUSTOMER_AVG_NAME);
         }
-        for (String firstName : closestNames) {
-            List<String> accountNumbers = CustomersFormUtil.retrieveAccountNumbersForUser(firstName, customerRows);
+        WaitHelper.untilToBePresent(customersTableLocator);
+        for (String firstName : firstNamesList) {
             deleteCustomerWithName(firstName);
+        }
+        return this;
+    }
+
+    /**
+     * Verify customers deletion by first names list.
+     *
+     * @param firstNamesList First names list
+     * @return This form object (for Fluent)
+     */
+    @Step("Verify customers deletion by first names")
+    public BankManagerCustomersForm verifyCustomersDeletionByFirstNames(List<String> firstNamesList) {
+        WaitHelper.untilToBePresent(customersTableLocator);
+        for (String firstName : firstNamesList) {
+            List<String> accountNumbers = CustomersFormUtil.retrieveAccountNumbersForUser(firstName, customerRows);
             verifyDeletion(accountNumbers);
         }
         return this;
@@ -134,7 +155,8 @@ public class BankManagerCustomersForm extends BankManagerPage {
     @Step("Verify customer deletion")
     private void verifyDeletion(List<String> accountNumbers) {
         boolean anyAccountFound = customerRows.stream()
-                .flatMap(CustomersFormUtil::getRowAccountNumbers)
+                .map(CustomersFormUtil::getRowAccountNumbers)
+                .flatMap(Collection::stream)
                 .anyMatch(accountNumbers::contains);
         assertFalse(MessageConstants.MSG_CUSTOMER_AVG_NAME_NOT_DELETED, anyAccountFound);
     }

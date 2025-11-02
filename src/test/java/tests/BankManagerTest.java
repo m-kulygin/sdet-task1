@@ -7,6 +7,8 @@ import pages.BankManagerAddCustomerForm;
 import pages.BankManagerCustomersForm;
 import utilities.DataGenerator;
 
+import java.util.List;
+
 /**
  * Class, that realises test-cases.
  *
@@ -25,7 +27,6 @@ public class BankManagerTest extends BaseTest {
         String postCode = DataGenerator.generatePostCode();
         String firstName = DataGenerator.generateFirstNameByPostCode(postCode);
         String lastName = DataGenerator.generateLastName();
-
         new BankManagerAddCustomerForm(driver)
                 .clickAddCustomerButton()
                 .fillFirstNameField(firstName)
@@ -57,8 +58,12 @@ public class BankManagerTest extends BaseTest {
     @DisplayName("Test-case 3: deleting a customer with first name length closest to average")
     @Owner("Max Kulygin")
     public void testCustomerDeletion() {
-        new BankManagerCustomersForm(driver)
+        BankManagerCustomersForm customersForm = new BankManagerCustomersForm(driver);
+        List<String> closestNames = customersForm
                 .clickCustomersButton()
-                .deleteCustomerBasedOnAverageFirstNameLength();
+                .findCustomersNamesWithFirstNameLengthsClosestToAverage();
+        customersForm
+                .deleteCustomersByFirstNames(closestNames)
+                .verifyCustomersDeletionByFirstNames(closestNames);
     }
 }

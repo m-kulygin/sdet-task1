@@ -37,8 +37,8 @@ public class CustomersFormUtil {
     public static double calculateAverageNameLength(List<String> names) {
         return names.stream()
                 .mapToInt(String::length)
-                .average().orElseThrow(() -> new AssertionError(
-                        MessageConstants.MSG_EMPTY_CUSTOMERS));
+                .average()
+                .orElseThrow(() -> new AssertionError(MessageConstants.MSG_EMPTY_CUSTOMERS));
     }
 
     /**
@@ -71,8 +71,7 @@ public class CustomersFormUtil {
     public static List<String> retrieveAccountNumbersForUser(String userName, List<WebElement> customerRows) {
         for (WebElement row : customerRows) {
             if (getRowFirstName(row).equals(userName)) {
-                return getRowAccountNumbers(row)
-                        .collect(Collectors.toList());
+                return getRowAccountNumbers(row);
             }
         }
         return new ArrayList<>();
@@ -84,12 +83,14 @@ public class CustomersFormUtil {
      * @param row Customer row from table
      * @return Account number for the row
      */
-    public static Stream<String> getRowAccountNumbers(WebElement row) {
-        return row.findElements(By.tagName("td"))
+    public static List<String> getRowAccountNumbers(WebElement row) {
+        return row
+                .findElements(By.tagName("td"))
                 .get(3)
                 .findElements(By.tagName("span"))
                 .stream()
-                .map(WebElement::getText);
+                .map(WebElement::getText)
+                .toList();
     }
 
     /**

@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - task1
-  pull_request:
-    types: [ opened, synchronize ]
 
 jobs:
   build-and-test:

@@ -25,8 +25,8 @@ public class MessageConstants {
     /**
      * Message if no name found to count average length
      */
-    public static final String MSG_NO_CUSTOMER_AVG_NAME =
-            "No suitable first name found to delete by length closest to average";
+    public static final String MSG_NO_CUSTOMER_AVG_NAME
+            = "No suitable first name found to delete by length closest to average";
     /**
      * Message if customer with first name closest to average is not deleted
      */
@@ -36,4 +36,8 @@ public class MessageConstants {
      * Message if customers list is empty
      */
     public static final String MSG_EMPTY_CUSTOMERS = "No data to calculate average first names length";
+    /**
+     * Message if post code format is invalid
+     */
+    public static final String MSG_INVALID_POST_CODE_FORMAT = "Invalid post code format while generating first name";
 }

@@ -16,6 +16,7 @@ public class DataGenerator {
 
     /**
      * Generate post code, containing 10 random digits.
+     *
      * @return Generated post code value as string containing digits
      */
     public static String generatePostCode() {
@@ -29,17 +30,16 @@ public class DataGenerator {
 
     /**
      * Generate first name depending on post code value.
+     *
      * @param postCode Post code value for first name value generating
      * @return Generated first name value
      */
     public static String generateFirstNameByPostCode(String postCode) {
         if (postCode.length() != POST_CODE_LENGTH || !postCode.matches("\\d+")) {
-            throw new AssertionError("Invalid post code format while generating first name");
+            throw new AssertionError();
         }
-
         char[] chars = postCode.toCharArray();
         StringBuilder result = new StringBuilder();
-
         for (int i = 0; i < chars.length; i += 2) {
             int num = Integer.parseInt(chars[i] + "" + chars[i + 1]);
             int index = num % ALPHABET_LENGTH;
@@ -50,18 +50,16 @@ public class DataGenerator {
 
     /**
      * Generate last name, containing from 5 to 10 random english letters.
+     *
      * @return Generated last name value
      */
     public static String generateLastName() {
         int length = random.nextInt(6) + 5;
         StringBuilder surname = new StringBuilder();
-
         surname.append(ALPHABET_LOWERCASE.charAt(random.nextInt(ALPHABET_LENGTH)));
-
         for (int i = 1; i < length; i++) {
             surname.append(ALPHABET_LOWERCASE.charAt(random.nextInt(ALPHABET_LENGTH)));
         }
-
         return surname.toString();
     }
 }

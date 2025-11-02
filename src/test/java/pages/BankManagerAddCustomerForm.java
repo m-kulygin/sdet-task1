@@ -5,11 +5,9 @@ import org.openqa.selenium.Alert;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.PageFactory;
 import utilities.MessageConstants;
 import utilities.WaitHelper;
 
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -18,7 +16,6 @@ import static org.junit.Assert.assertTrue;
  * @author Max Kulygin
  */
 public class BankManagerAddCustomerForm extends BankManagerPage {
-
     /**
      * Main Add Customer button, that opens customer addition form.
      */
@@ -109,7 +106,7 @@ public class BankManagerAddCustomerForm extends BankManagerPage {
         alert.accept();
         boolean alertTextContainsSubstring = alertText.contains(MessageConstants.MSG_CUSTOMER_ADD_SUCCESS_SUBSTRING);
         assertTrue(MessageConstants.MSG_CUSTOMER_ADD_ALERT_REQUIRES
-                        + " \"" + MessageConstants.MSG_CUSTOMER_ADD_SUCCESS_SUBSTRING + "\"",
+                + " \"" + MessageConstants.MSG_CUSTOMER_ADD_SUCCESS_SUBSTRING + "\"",
                 alertTextContainsSubstring);
         return this;
     }
