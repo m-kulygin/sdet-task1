@@ -1,12 +1,10 @@
 package pages;
 
 import io.qameta.allure.Step;
-import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.PageFactory;
 import utilities.CustomersFormUtil;
 import utilities.MessageConstants;
 import utilities.WaitHelper;
@@ -16,6 +14,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Page class, that realises customers list actions.
@@ -66,42 +65,32 @@ public class BankManagerCustomersForm extends BankManagerPage {
     }
 
     /**
-     * Verify that customers list is sorted
-     */
-    @Step("Checking customers list is sorted by first name")
-    public void verifyFirstNamesSorted() {
-        List<String> originalNames = firstNamesList.stream()
-                .map(WebElement::getText)
-                .toList();
-        boolean isSortedAsc = checkFirstNamesSortedAscending(originalNames);
-        boolean isSortedDesc = checkFirstNamesSortedDescending(originalNames);
-        Assert.assertTrue(MessageConstants.MSG_CUSTOMERS_LIST_NOT_SORTED, isSortedAsc || isSortedDesc);
-    }
-
-    /**
-     * Check that customers list is sorted ascending.
+     * Verify that customers list is sorted ascending.
      *
-     * @param originalNames Original names list
-     * @return true if customers list is sorted (asc), false otherwise
+     * @return This form object (for Fluent)
      */
-    @Step("Checking customers list is sorted by first name in ascending order")
-    public boolean checkFirstNamesSortedAscending(List<String> originalNames) {
+    @Step("Verifying customers list is sorted by first name in ascending order")
+    public BankManagerCustomersForm verifyFirstNamesSortedAscending() {
+        List<String> originalNames = CustomersFormUtil.getFirstNamesFromWebElements(firstNamesList);
         List<String> ascSortedCopy = new ArrayList<>(originalNames);
         Collections.sort(ascSortedCopy);
-        return originalNames.equals(ascSortedCopy);
+        boolean sortedAsc =  originalNames.equals(ascSortedCopy);
+        assertTrue(MessageConstants.MSG_CUSTOMERS_LIST_NOT_SORTED_ASC, sortedAsc);
+        return this;
     }
 
     /**
-     * Check that customers list is sorted descending.
+     * Verify that customers list is sorted descending.
      *
-     * @param originalNames Original names list
-     * @return true if customers list is sorted (desc), false otherwise
+     * @return This form object (for Fluent)
      */
-    @Step("Checking customers list is sorted by first name in ascending order")
-    public boolean checkFirstNamesSortedDescending(List<String> originalNames) {
+    @Step("Verifying customers list is sorted by first name in ascending order")
+    public BankManagerCustomersForm verifyFirstNamesSortedDescending() {
+        List<String> originalNames = CustomersFormUtil.getFirstNamesFromWebElements(firstNamesList);
         List<String> descSortedCopy = new ArrayList<>(originalNames);
-        descSortedCopy.sort(Collections.reverseOrder());
-        return originalNames.equals(descSortedCopy);
+        boolean sortedDesc =  originalNames.equals(descSortedCopy);
+        assertTrue(MessageConstants.MSG_CUSTOMERS_LIST_NOT_SORTED_DESC, sortedDesc);
+        return this;
     }
 
     /**
@@ -112,21 +101,17 @@ public class BankManagerCustomersForm extends BankManagerPage {
     @Step("Deleting customer with first name length closest to average")
     public BankManagerCustomersForm deleteCustomerBasedOnAverageFirstNameLength() {
         WaitHelper.untilToBePresent(customersTableLocator);
-
         List<String> firstNames = CustomersFormUtil.extractFirstNamesFromTable(customerRows);
         double avgLength = CustomersFormUtil.calculateAverageNameLength(firstNames);
-
-        String closestName = CustomersFormUtil.findClosestName(firstNames, avgLength);
-        if (closestName == null) {
+        List<String> closestNames = CustomersFormUtil.findClosestNames(firstNames, avgLength);
+        if (closestNames == null || closestNames.isEmpty()) {
             throw new AssertionError(MessageConstants.MSG_NO_CUSTOMER_AVG_NAME);
         }
-
-        List<String> accountNumbers = CustomersFormUtil.retrieveAccountNumbersForUser(closestName, customerRows);
-
-        deleteCustomerWithName(closestName);
-
-        verifyDeletion(accountNumbers);
-
+        for (String firstName : closestNames) {
+            List<String> accountNumbers = CustomersFormUtil.retrieveAccountNumbersForUser(firstName, customerRows);
+            deleteCustomerWithName(firstName);
+            verifyDeletion(accountNumbers);
+        }
         return this;
     }
 

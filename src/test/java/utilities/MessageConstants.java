@@ -15,9 +15,13 @@ public class MessageConstants {
      */
     public static final String MSG_CUSTOMER_ADD_ALERT_REQUIRES = "Alert message has to contain substring";
     /**
-     * Message if customers list is not sorted
+     * Message if customers list is not sorted ascending
      */
-    public static final String MSG_CUSTOMERS_LIST_NOT_SORTED = "Customers list has to be sorted";
+    public static final String MSG_CUSTOMERS_LIST_NOT_SORTED_ASC = "Customers list has to be sorted ascending";
+    /**
+     * Message if customers list is not sorted descending
+     */
+    public static final String MSG_CUSTOMERS_LIST_NOT_SORTED_DESC = "Customers list has to be sorted ascending";
     /**
      * Message if no name found to count average length
      */

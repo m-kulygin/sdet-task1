@@ -42,19 +42,23 @@ public class CustomersFormUtil {
     }
 
     /**
-     * Finds first name, having length closest to average
+     * Finds all names, having length closest to average
      *
      * @param names     First names list
      * @param avgLength Average length value
-     * @return Result first name
+     * @return Result names list
      */
-    public static String findClosestName(List<String> names, double avgLength) {
+    public static List<String> findClosestNames(List<String> names, double avgLength) {
         if (names.isEmpty()) {
             return null;
         }
-        return names.stream()
+        double minLength = names.stream()
                 .min(Comparator.comparingDouble(name -> Math.abs(name.length() - avgLength)))
+                .map(String::length)
                 .get();
+        return names.stream()
+                .filter(name -> name.length() == minLength)
+                .toList();
     }
 
     /**
@@ -99,5 +103,17 @@ public class CustomersFormUtil {
                 .findElements(By.tagName("td"))
                 .get(0)
                 .getText();
+    }
+
+    /**
+     * Get first name strings from web elements list
+     *
+     * @param firstNamesList Web element list containing first names
+     * @return List of first names strings
+     */
+    public static List<String> getFirstNamesFromWebElements(List<WebElement> firstNamesList) {
+        return firstNamesList.stream()
+                .map(WebElement::getText)
+                .toList();
     }
 }

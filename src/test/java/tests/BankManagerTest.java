@@ -45,7 +45,9 @@ public class BankManagerTest extends BaseTest {
         new BankManagerCustomersForm(driver)
                 .clickCustomersButton()
                 .clickFirstNameHeader()
-                .verifyFirstNamesSorted();
+                .verifyFirstNamesSortedDescending()
+                .clickFirstNameHeader()
+                .verifyFirstNamesSortedAscending();
     }
 
     /**
